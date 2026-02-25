@@ -1,0 +1,525 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title> Login — Rays Markethub </title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --beige: #e4d9d2;
+      --white: #ffffff;
+      --indigo: #4641e8;
+      --indigo-hover: #3530cc;
+      --orange: #c87533;
+      --text-dark: #1a1a2e;
+      --text-muted: #9a9aaa;
+      --input-bg: #f2f2f5;
+      --border: #e0e0ea;
+      --shadow: 0 8px 40px rgba(0,0,0,0.10);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .page {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── LEFT PANEL ── */
+    .left-panel {
+      width: 42%;
+      background-color: var(--beige);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .left-panel::before {
+      content: '';
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      bottom: -80px;
+      left: -80px;
+    }
+
+    .left-panel::after {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      top: -60px;
+      right: -40px;
+    }
+
+    /* Illustration placeholder — swap with your actual <img> tag */
+    .illustration {
+      width: 100%;
+      max-width: 420px;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .illustration img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      /* Replace src below with {% static 'images/your-illustration.png' %} */
+    }
+
+    /* Fallback SVG illustration if no image */
+    .illustration-fallback {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ── RIGHT PANEL ── */
+    .right-panel {
+      width: 58%;
+      background-color: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 40px;
+      position: relative;
+    }
+
+    .brand {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: 0.12em;
+      color: var(--text-dark);
+      text-transform: uppercase;
+      position: absolute;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 52px 48px 48px;
+      width: 100%;
+      max-width: 560px;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.75rem;
+      color: var(--text-dark);
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    /* ── FORM ── */
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 15px 48px 15px 18px;
+      background: var(--input-bg);
+      border: 1.5px solid transparent;
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-wrapper input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .input-wrapper input:focus {
+      border-color: var(--indigo);
+      box-shadow: 0 0 0 4px rgba(70, 65, 232, 0.08);
+      background: #fff;
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    /* Checkmark icon (email valid) */
+    .icon-check {
+      width: 28px;
+      height: 28px;
+      background: var(--text-dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-check svg {
+      width: 14px;
+      height: 14px;
+      stroke: white;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Eye icon (toggle password) */
+    .icon-eye svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--text-muted);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .forgot {
+      display: block;
+      text-align: right;
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: var(--orange);
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+
+    .forgot:hover {
+      opacity: 0.75;
+    }
+
+    /* Django form errors */
+    .error-message {
+      color: #e53e3e;
+      font-size: 0.8rem;
+      margin-top: 6px;
+    }
+
+    .non-field-errors {
+      background: #fff5f5;
+      border: 1px solid #fed7d7;
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: #c53030;
+      font-size: 0.85rem;
+      margin-bottom: 20px;
+    }
+
+    /* ── SIGN IN BUTTON ── */
+    .btn-signin {
+      display: block;
+      width: 100%;
+      padding: 17px;
+      background: var(--indigo);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 28px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(70, 65, 232, 0.3);
+    }
+
+    .btn-signin:hover {
+      background: var(--indigo-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 28px rgba(70, 65, 232, 0.38);
+    }
+
+    .btn-signin:active {
+      transform: translateY(0);
+    }
+
+    .signup-link {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .signup-link a {
+      color: var(--indigo);
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .signup-link a:hover {
+      text-decoration: underline;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .left-panel { display: none; }
+      .right-panel { width: 100%; padding: 40px 20px; }
+      .card { padding: 36px 24px; }
+      .brand { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ═══════════════ LEFT PANEL ═══════════════ -->
+  <div class="left-panel">
+    <div class="illustration">
+      <!--
+        Replace this SVG with your actual illustration:
+        <img src="{% static 'images/illustration.png' %}" alt="Markethub illustration" />
+      -->
+      <svg class="illustration-fallback" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- Ground ellipse -->
+        <ellipse cx="200" cy="340" rx="130" ry="22" fill="rgba(0,0,0,0.07)"/>
+
+        <!-- Display board stand -->
+        <rect x="185" y="270" width="12" height="60" fill="#2d2d2d" rx="4"/>
+        <rect x="160" y="326" width="62" height="10" fill="#2d2d2d" rx="4"/>
+
+        <!-- Display board body -->
+        <rect x="80" y="90" width="200" height="180" rx="10" fill="#1e1e2e"/>
+        <rect x="88" y="98" width="184" height="164" rx="7" fill="#f0eff5"/>
+
+        <!-- Board content lines -->
+        <rect x="100" y="115" width="80" height="14" rx="4" fill="#dddaee"/>
+        <rect x="100" y="136" width="60" height="8" rx="3" fill="#e8e5f5"/>
+        <rect x="100" y="150" width="70" height="8" rx="3" fill="#e8e5f5"/>
+
+        <!-- Cancelled badge 1 -->
+        <rect x="100" y="168" width="72" height="42" rx="6" fill="#fff" stroke="#ddd" stroke-width="1"/>
+        <rect x="106" y="195" width="60" height="10" rx="4" fill="#c0392b" opacity="0.8"/>
+        <text x="136" y="204" font-size="9" fill="white" font-family="sans-serif" font-weight="bold" text-anchor="middle">CANCELLED</text>
+
+        <!-- Cancelled badge 2 -->
+        <rect x="100" y="218" width="72" height="42" rx="6" fill="#fff" stroke="#ddd" stroke-width="1"/>
+        <rect x="106" y="245" width="60" height="10" rx="4" fill="#c0392b" opacity="0.8"/>
+        <text x="136" y="254" font-size="9" fill="white" font-family="sans-serif" font-weight="bold" text-anchor="middle">CANCELLED</text>
+
+        <!-- Plant pot -->
+        <rect x="52" y="300" width="34" height="30" rx="4" fill="#c0392b"/>
+        <ellipse cx="69" cy="300" rx="17" ry="5" fill="#a93226"/>
+        <path d="M69 298 Q50 270 40 250" stroke="#7d3c98" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M69 298 Q60 265 75 240" stroke="#7d3c98" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <ellipse cx="40" cy="248" rx="14" ry="10" fill="#8e44ad"/>
+        <ellipse cx="75" cy="238" rx="14" ry="10" fill="#8e44ad"/>
+
+        <!-- Person 1 (dark skin, blue top, orange pants) — pointing -->
+        <circle cx="268" cy="178" r="18" fill="#8d5524"/>
+        <rect x="254" y="196" width="28" height="38" rx="6" fill="#3498db"/>
+        <rect x="254" y="234" width="12" height="44" rx="5" fill="#e67e22"/>
+        <rect x="270" y="234" width="12" height="44" rx="5" fill="#e67e22"/>
+        <rect x="250" y="274" width="14" height="10" rx="4" fill="#2c3e50"/>
+        <rect x="268" y="274" width="14" height="10" rx="4" fill="#2c3e50"/>
+        <!-- Pointing arm -->
+        <line x1="254" y1="210" x2="220" y2="195" stroke="#8d5524" stroke-width="6" stroke-linecap="round"/>
+
+        <!-- Person 2 (glasses, white shirt, blue vest, orange pants) -->
+        <circle cx="318" cy="165" r="18" fill="#fad7a0"/>
+        <!-- Glasses -->
+        <circle cx="312" cy="163" r="5" fill="none" stroke="#555" stroke-width="1.5"/>
+        <circle cx="324" cy="163" r="5" fill="none" stroke="#555" stroke-width="1.5"/>
+        <line x1="317" y1="163" x2="319" y2="163" stroke="#555" stroke-width="1.5"/>
+        <!-- Body -->
+        <rect x="304" y="183" width="28" height="40" rx="6" fill="white"/>
+        <rect x="307" y="183" width="22" height="40" rx="4" fill="#2c3e50" opacity="0.85"/>
+        <rect x="304" y="223" width="12" height="44" rx="5" fill="#e67e22"/>
+        <rect x="320" y="223" width="12" height="44" rx="5" fill="#e67e22"/>
+        <rect x="301" y="263" width="14" height="10" rx="4" fill="#2c3e50"/>
+        <rect x="317" y="263" width="14" height="10" rx="4" fill="#2c3e50"/>
+
+        <!-- Exclamation marks above person 2 -->
+        <text x="330" y="145" font-size="22" fill="#4641e8" font-weight="bold" font-family="sans-serif">!</text>
+        <text x="348" y="135" font-size="16" fill="#4641e8" font-weight="bold" font-family="sans-serif">!</text>
+
+        <!-- Lightning bolts -->
+        <path d="M295 150 L305 160 L298 160 L308 175" stroke="#4641e8" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M280 140 L290 150 L283 150 L293 162" stroke="#4641e8" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ═══════════════ RIGHT PANEL ═══════════════ -->
+  <div class="right-panel">
+    <div class="brand">Rays Markethub</div>
+
+    <div class="card">
+      <h1>Welcome Back!</h1>
+
+      <!-- Django messages / non-field errors -->
+      {% if form.non_field_errors %}
+        <div class="non-field-errors">
+          {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+
+        <!-- Email Field -->
+        <div class="form-group">
+          <label for="id_email">Email Address</label>
+          <div class="input-wrapper">
+            <input
+              type="email"
+              id="id_email"
+              name="email"
+              placeholder="olaade123@gmail.com"
+
+              autocomplete="email"
+              required
+            />
+            <span class="input-icon icon-check">
+              <svg viewBox="0 0 24 24">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </span>
+          </div>
+          {% if form.email.errors %}
+            {% for error in form.email.errors %}
+              <p class="error-message">{{ error }}</p>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <label for="id_password">Password</label>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="id_password"
+              name="password"
+              placeholder="••••••••••"
+              autocomplete="current-password"
+              required
+            />
+            <span class="input-icon icon-eye" onclick="togglePassword()" title="Show/hide password">
+              <svg id="eye-icon" viewBox="0 0 24 24">
+                <!-- Eye-slash icon (matches Figma design) -->
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20C7 20 2.73 16.39 1 12a10.12 10.12 0 0 1 2.12-3.88"/>
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c5 0 9.27 3.61 11 8a10.1 10.1 0 0 1-1.35 2.65"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </span>
+          </div>
+          {% if form.password.errors %}
+            {% for error in form.password.errors %}
+              <p class="error-message">{{ error }}</p>
+            {% endfor %}
+          {% endif %}
+          <a href="{% url 'password_reset' %}" class="forgot">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="btn-signin">Sign In</button>
+      </form>
+
+      <p class="signup-link">
+        Don't have an account? <a href="{% url 'register' %}">Sign up</a>
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Toggle password visibility
+  function togglePassword() {
+    const input = document.getElementById('id_password');
+    const icon  = document.getElementById('eye-icon');
+
+    if (input.type === 'password') {
+      input.type = 'text';
+      // Switch to open eye
+      icon.innerHTML = `
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+        <circle cx="12" cy="12" r="3"/>
+      `;
+    } else {
+      input.type = 'password';
+      // Switch back to eye-slash
+      icon.innerHTML = `
+        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20C7 20 2.73 16.39 1 12a10.12 10.12 0 0 1 2.12-3.88"/>
+        <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c5 0 9.27 3.61 11 8a10.1 10.1 0 0 1-1.35 2.65"/>
+        <line x1="1" y1="1" x2="23" y2="23"/>
+      `;
+    }
+  }
+
+  // Auto show checkmark on valid email
+  const emailInput = document.getElementById('id_email');
+  const checkIcon  = document.querySelector('.icon-check');
+
+  checkIcon.style.display = emailInput.value ? 'flex' : 'none';
+
+  emailInput.addEventListener('input', function () {
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value);
+    checkIcon.style.display = valid ? 'flex' : 'none';
+  });
+</script>
+
+</body>
+</html>
